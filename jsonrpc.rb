@@ -14,11 +14,10 @@ module JsonRPC
       @address    = Addressable::URI.parse(url)
     end
 
-    def request(method, params)
-      @@id++
+    def request(method, params = [])
+      @@id += 1 # increment id for each request 
       
       result = {}
-      params ||= {}
       h = {"Content-Type" => "application/json"}
       Net::HTTP.start(@address.host, @address.port) do |connection|
 	      json = {:method => method.to_s, :params => params, id: @@id, version: "1.0"}.to_json
@@ -26,7 +25,7 @@ module JsonRPC
       end
       
       if error = result["error"]
-        raise JsonRPCError, result["error"].inspect
+        raise JsonRPCError, result
       end
       result
     end

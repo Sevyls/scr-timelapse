@@ -42,5 +42,22 @@ else
       'av' => SONY_AV_URN).to_s  
     services << service
   end
-  puts "Found #{services.size} Service(s): #{services.map {|s| s.type }.join(", ")}" 
+  
+  camera_service = services.select {|s| s.type == 'camera'}.first
+  
+  puts camera_service.inspect
+  
+  # Get camera status
+  client = JsonRPC::Client.new("#{camera_service.url}/#{camera_service.type}")
+  response = client.request("getEvent", [false])
+  camera_status = response["result"][1]["cameraStatus"]
+  puts "Camera status: #{camera_status}"
+  if camera_status == 'IDLE'
+    # shoot still
+    response = client.request("actTakePicture")
+    puts response
+    
+  end
+  
+  
 end
