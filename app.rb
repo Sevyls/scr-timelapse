@@ -10,6 +10,16 @@ require_relative 'jsonrpc'
 
 SONY_ST_HEADER = 'urn:schemas-sony-com:service:ScalarWebAPI:1'
 SONY_AV_URN = 'urn:schemas-sony-com:av'
+INTERVAL = 10
+
+def every_n_seconds(n)
+	loop do
+	  before = Time.now
+	  yield
+	  interval = n - (Time.now - before)
+	  sleep(interval) if interval > 0
+  end
+end
 
 puts 'Searching for cameras...'
 response_list = Playful::SSDP.search SONY_ST_HEADER
@@ -52,11 +62,32 @@ else
   response = client.request("getEvent", [false])
   camera_status = response["result"][1]["cameraStatus"]
   puts "Camera status: #{camera_status}"
+  
   if camera_status == 'IDLE'
-    # shoot still
-    response = client.request("actTakePicture")
-    puts response
+    # check availabilty of IntervalStillRec methods
+    supported_apis = client.request("getMethodTypes", ["1.0"])['results'].map! {|e| e[0]}
+    interval_still_rec_supported = not(supported_apis.select {|e| e == 'startIntervalStillRec'}.empty?)
     
+    puts 'Starting timelapse capturing...'
+    
+    if interval_still_rec_supported
+      response = client.request("setIntervalTime", [{"intervalTimeSec" => INTERVAL}])
+      puts response
+    
+      response = client.request("startIntervalStillRec")
+      puts response
+    else 
+      # i.e. Sony DSC-QX10 does not support IntervalStillRec methods...
+      
+      every_n_seconds(INTERVAL) do
+        # shoot still
+        response = client.request("actTakePicture")
+        puts response
+      end
+    end
+    
+  else
+    puts 'Camera not IDLE... exiting.'
   end
   
   

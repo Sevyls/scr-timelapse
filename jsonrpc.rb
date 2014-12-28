@@ -18,6 +18,7 @@ module JsonRPC
       @@id += 1 # increment id for each request 
       
       result = {}
+      
       h = {"Content-Type" => "application/json"}
       Net::HTTP.start(@address.host, @address.port) do |connection|
 	      json = {:method => method.to_s, :params => params, id: @@id, version: "1.0"}.to_json
