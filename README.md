@@ -13,6 +13,7 @@ You have to combine all photos by yourself, i.e. with 'Time Lapse Assembler' on 
 ## Requirements
 
 * Ruby 2.1.x or higher
+* Wifi connection
 
 ## Instructions
 
@@ -20,6 +21,10 @@ You have to combine all photos by yourself, i.e. with 'Time Lapse Assembler' on 
 2. Open Terminal/bash
 3. cd to Project directory
 4. Run `ruby app.rb`
+
+## Supported Cameras
+
+Have a look at: https://developer.sony.com/develop/cameras/device-support/
 
 ## Thanks to
 
