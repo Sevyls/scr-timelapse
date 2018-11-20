@@ -12,7 +12,7 @@ You have to combine all photos by yourself, i.e. with 'Time Lapse Assembler' on 
 
 ## Requirements
 
-* Ruby 2.1.x or higher
+* Ruby 2.4.3 or higher
 * Wifi connection
 
 ## Instructions
